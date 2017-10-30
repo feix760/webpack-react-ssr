@@ -1,0 +1,22 @@
+
+import React from 'react';
+import ReactDOM from 'react-dom';
+import './index.scss';
+
+class Page extends React.Component {
+  constructor (props, context) {
+    super(props, context);
+  }
+
+  render() {
+    return (
+      <div>Hello world, List</div>
+    );
+  }
+}
+
+ReactDOM.render(
+  <Page></Page>,
+  document.getElementById('root')
+);
+
