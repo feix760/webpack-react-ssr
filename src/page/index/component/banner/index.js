@@ -11,12 +11,8 @@ export default class Banner extends React.Component {
     return (
       <div>
         <p>Banner</p>
-        <img src={ require('./images/logo.png') } alt="" />
+        <img src={ require('./image/logo.png') } alt="" />
       </div>
     );
   }
-}
-
-if (module.hot) {
-  module.hot.accept();
 }
