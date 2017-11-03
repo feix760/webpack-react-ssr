@@ -3,151 +3,99 @@ const glob = require('glob-all');
 const webpack = require('webpack');
 const webpackTool = require('webpack-tool');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
-const ExtractTextPlugin = require("extract-text-webpack-plugin");
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const WebpackMd5Hash = require('webpack-md5-hash');
 const nodeExternals = require('webpack-node-externals');
 const HotModuleReplacementPlugin = webpack.HotModuleReplacementPlugin;
+const UglifyJSPlugin = webpack.optimize.UglifyJsPlugin;
 const CommonsChunkPlugin = webpack.optimize.CommonsChunkPlugin;
 
-class WebpackConfig {
-  constructor(options = {}) {
-    options = Object.assign(
-      {
-        target: 'web',
-        env: 'dev',
-      },
-      options
-    );
+const getWebpackConfig = options => {
+  options = options || {};
+  const isServer = options.target === 'node';
+  const isProduction = options.env === 'production';
+  const output = isServer ? './server' : './dist';
 
-    const isServer = this.isServer = options.target === 'node';
-    const isProd =  this.isProd = options.env === 'prod';
-    const output = isServer ? './server' : './dist';
-
-    this.config = {
-      entry: {
-        include: [
-          './src/page/**/index.js',
-          '!./src/page/**/component/**',
-        ],
-      },
-      output: {
-        path: path.join(__dirname, output),
-        filename: `js/[name]${ isProd && !isServer ? '.[chunkhash:8]' : ''}.js`,
-        publicPath: '/',
-      },
-      devtool: 'source-map',
-      devServer: {
-        contentBase: output,
-        hot: true,
-      },
-      module: {
-        rules: [
-          {
-            test: /\.js$/,
-            exclude: /node_modules/,
-            use: {
-              loader: 'babel-loader',
+  let config = {
+    entry: {
+      include: [
+        './src/page/**/index.js',
+        '!./src/page/**/component/**',
+      ],
+    },
+    output: {
+      path: path.join(__dirname, output),
+      filename: `js/[name]${isProduction && !isServer ? '.[chunkhash:8]' : ''}.js`,
+      publicPath: '/',
+    },
+    module: {
+      rules: [
+        {
+          test: /\.js$/,
+          exclude: /node_modules/,
+          use: {
+            loader: 'babel-loader',
+          },
+        },
+        {
+          test: /\.scss$/,
+          use: ExtractTextPlugin.extract({
+            fallback: 'style-loader',
+            use: [
+              {
+                loader: 'css-loader',
+                options: {
+                  minimize: isProduction,
+                },
+              },
+              {
+                loader: 'autoprefixer-loader',
+              },
+              'sass-loader',
+            ],
+          }),
+        },
+        {
+          test: /\.(png|svg|jpg|gif)$/,
+          use: {
+            loader: 'file-loader',
+            options: {
+              name: 'img/[name].[hash:8].[ext]',
             },
           },
-          {
-            test: /\.scss$/,
-            use: ExtractTextPlugin.extract({
-              fallback: 'style-loader',
-              use: [ 'css-loader', 'sass-loader' ],
-            }),
-          },
-          {
-            test: /\.(png|svg|jpg|gif)$/,
-            use: {
-              loader: 'file-loader',
-              options: {
-                name: `img/[name].[hash:8].[ext]`
-              },
-            }
-          },
-        ],
-      },
-      plugins: [
-        new CleanWebpackPlugin([ output ]),
-        // new UglifyJSPlugin(),
-        new HotModuleReplacementPlugin(),
-        new WebpackMd5Hash(),
-        new CommonsChunkPlugin({
-          name: 'common',
-        }),
-        new ExtractTextPlugin(`css/[name]${ isProd ? '.[contenthash:8]' : ''}.css`),
-      ]
-    };
+        },
+      ],
+    },
+    plugins: [
+      new CleanWebpackPlugin([ output ]),
+      new WebpackMd5Hash(),
+      new ExtractTextPlugin(`css/[name]${isProduction ? '.[contenthash:8]' : ''}.css`),
+    ],
+  };
 
-    this.initConfig();
-  }
-
-  initConfig() {
-    this.setEntry();
-    this.setDevTool();
-    this.setCommonsChunk();
-    this.setTarget();
-    this.setHTMLPlugin();
-  }
-
-  setEntry() {
+  const setEntry = () => {
     const entry = {};
-    glob.sync(this.config.entry.include).forEach(item => {
+    glob.sync(config.entry.include).forEach(item => {
       const name = item.replace(/^(\.?\/)?src\/page\//, '').replace(/\/[^\/]*$/, '');
-      if (this.isServer) {
+      if (isServer || isProduction) {
         entry[name] = [ item ];
       } else {
         entry[name] = [ 'webpack-hot-middleware/client', item ];
       }
     });
-    this.config.entry = entry;
-  }
+    config.entry = entry;
+  };
 
-  setDevTool() {
-    const { config } = this;
-    if (this.isProd) {
-      config.devtool = undefined;
-      config.devServer = undefined;
+  const setCommonsChunk = () => {
+    if (!isServer) {
+      config.plugins.push(new CommonsChunkPlugin({
+        name: 'common',
+      }));
     }
-    if (this.isProd || this.isServer) {
-      for (let i = 0; i < config.plugins.length; i++) {
-        const plugin = config.plugins[i];
-        if (plugin instanceof HotModuleReplacementPlugin) {
-          config.plugins.splice(i, 1);
-        }
-      }
-    }
-  }
+  };
 
-  setCommonsChunk() {
-    const { config } = this;
-    if (this.isServer) {
-      for (let i = 0; i < config.plugins.length; i++) {
-        const plugin = config.plugins[i];
-        if (plugin instanceof CommonsChunkPlugin) {
-          config.plugins.splice(i, 1);
-        }
-      }
-    }
-  }
-
-  setTarget() {
-    if (this.isServer) {
-      this.config = webpackTool.merge(this.config, {
-        target: 'node',
-        externals: [ nodeExternals() ],
-        output: {
-          libraryTarget: 'commonjs2',
-        },
-      });
-    }
-  }
-
-  setHTMLPlugin() {
-    const { config } = this;
-
+  const setHTMLPlugin = () => {
     let commonsChunk = [];
 
     for (let i = 0; i < config.plugins.length; i++) {
@@ -167,10 +115,57 @@ class WebpackConfig {
         chunks: commonsChunk.concat([ chunk ]),
       }));
     });
-  }
-}
+  };
+
+  const setUglify = () => {
+    if (isProduction && !isServer) {
+      config.plugins.push(new UglifyJSPlugin());
+    }
+  };
+
+  const setTarget = () => {
+    if (isServer) {
+      config = webpackTool.merge(config, {
+        target: 'node',
+        externals: [ nodeExternals() ],
+        output: {
+          libraryTarget: 'commonjs2',
+        },
+      });
+    }
+  };
+
+  const setDevTool = () => {
+    if (!isProduction) {
+      config.devtool = 'source-map';
+
+      if (!isServer) {
+        config.devServer = {
+          contentBase: output,
+          hot: true,
+        };
+
+        config.plugins.push(new HotModuleReplacementPlugin());
+      }
+    }
+  };
+
+  setEntry();
+  setCommonsChunk();
+  setHTMLPlugin();
+  setUglify();
+  setTarget();
+  setDevTool();
+
+  return config;
+};
 
 module.exports = [
-  new WebpackConfig().config,
-  new WebpackConfig({ target: 'node' }).config,
+  getWebpackConfig({
+    env: process.env.NODE_ENV,
+  }),
+  getWebpackConfig({
+    env: process.env.NODE_ENV,
+    target: 'node',
+  }),
 ];

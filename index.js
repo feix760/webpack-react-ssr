@@ -31,21 +31,22 @@ app.use((req, res, next) => {
 
     const Component = requireFromString(js, chunkfile);
 
-    const store = Component.createStore();
+    const store = Component.createStore && Component.createStore();
 
-    Component.fetchStore(store).then(() => {
-      const element = Component.createElement(store);
+    (Component.fetchStore ? Component.fetchStore(store) : Promise.resolve())
+      .then(() => {
+        const element = Component.createElement(store);
 
-      const html = ReactDOM.renderToString(element);
-      const state = store.getState();
+        const html = ReactDOM.renderToString(element);
+        const state = store && store.getState() || {};
 
-      const body = template.replace(/<!--\s*__initialHTML\s*-->/, html)
-        .replace(
-          /<!--\s*__initialState\s*-->/,
-          `<script> window.__initialState = ${JSON.stringify(state).replace(/</g, '&lt')}</script>`
-        );
-      res.end(body);
-    });
+        const body = template.replace(/<!--\s*__initialHTML\s*-->/, html)
+          .replace(
+            /<!--\s*__initialState\s*-->/,
+            `<script> window.__initialState = ${JSON.stringify(state).replace(/</g, '&lt')}</script>`
+          );
+        res.end(body);
+      });
   } else {
     next();
   }
@@ -56,6 +57,6 @@ app.use(webpackDevMiddleware);
 app.use(WebpackHotMiddleware(compiler.compilers[0]));
 
 // Serve the files on port 3000.
-app.listen(3000, function () {
+app.listen(3000, function() {
   console.log('Example app listening on port 3000!\n');
 });

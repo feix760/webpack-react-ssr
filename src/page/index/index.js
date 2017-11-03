@@ -8,10 +8,6 @@ import Banner from './component/banner';
 import './index.scss';
 
 class Component extends React.Component {
-  constructor (props, context) {
-    super(props, context);
-  }
-
   render() {
     const { counter } = this.props;
     return (
@@ -26,7 +22,6 @@ class Component extends React.Component {
 
 const Root = connect(state => {
   return state;
-
 })(Component);
 
 export function createElement(store) {
@@ -44,9 +39,9 @@ export {
 export function fetchStore(store) {
   if (store.getState().counter.num === 0) {
     return store.dispatch(addCounter(5));
-  } else {
-    return Promise.resolve();
   }
+  return Promise.resolve();
+
 }
 
 function clientRender() {

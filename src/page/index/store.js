@@ -10,7 +10,7 @@ export default function() {
   return createStore(
     combineReducers({
       counter: (state = defaultCounter, action) => {
-        let { data } = action;
+        const { data } = action;
         switch (action.type) {
           case ADD_COUNTER:
             state.num += data;
@@ -18,9 +18,11 @@ export default function() {
               ...state,
             };
             break;
+          default:
+            break;
         }
         return state;
-      }
+      },
     }),
     typeof window !== 'undefined' && window.__initialState || {},
     applyMiddleware(thunkMiddleware)

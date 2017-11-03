@@ -4,10 +4,6 @@ import ReactDOM from 'react-dom';
 import './index.scss';
 
 class Page extends React.Component {
-  constructor (props, context) {
-    super(props, context);
-  }
-
   render() {
     return (
       <div>Hello world, List</div>
@@ -15,8 +11,16 @@ class Page extends React.Component {
   }
 }
 
-ReactDOM.render(
-  <Page></Page>,
-  document.getElementById('root')
-);
+export function createElement() {
+  return (
+    <Page></Page>
+  );
+}
+
+if (typeof window !== 'undefined') {
+  ReactDOM.render(
+    createElement(),
+    document.getElementById('root')
+  );
+}
 

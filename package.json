@@ -4,8 +4,12 @@
   "description": "",
   "main": "",
   "scripts": {
+    "build": "webpack -w",
+    "build-prod": "NODE_ENV=production webpack",
     "start": "node index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start-prod": "npm run build-prod && NODE_ENV=production node index.js",
+    "lint": "eslint .",
+    "fix": "eslint . --fix"
   },
   "dependencies": {
     "express": "^4.16.2",
@@ -16,25 +20,29 @@
     "redux-thunk": "^2.2.0"
   },
   "devDependencies": {
-    "glob-all": "^3.1.0",
-    "require-from-string": "^2.0.1",
-    "webpack": "^3.6.0",
-    "webpack-tool": "^2.1.2",
-    "webpack-node-externals": "^1.6.0",
+    "autoprefixer-loader": "^3.2.0",
+    "babel-eslint": "^8.0.1",
     "babel-loader": "^7.1.2",
+    "clean-webpack-plugin": "^0.1.17",
+    "css-loader": "^0.28.7",
+    "eslint": "^4.3.0",
+    "eslint-config-egg": "^5.1.1",
+    "eslint-plugin-react": "^7.4.0",
+    "extract-loader": "^1.0.1",
+    "extract-text-webpack-plugin": "^3.0.0",
     "file-loader": "^0.11.2",
+    "glob-all": "^3.1.0",
+    "html-webpack-plugin": "^2.30.1",
     "node-sass": "^4.5.3",
+    "require-from-string": "^2.0.1",
     "sass-loader": "^6.0.6",
     "style-loader": "^0.18.2",
-    "css-loader": "^0.28.7",
-    "extract-loader": "^1.0.1",
-    "webpack-md5-hash": "^0.0.5",
-    "clean-webpack-plugin": "^0.1.17",
-    "extract-text-webpack-plugin": "^3.0.0",
-    "html-webpack-plugin": "^2.30.1",
-    "uglifyjs-webpack-plugin": "^0.4.6",
+    "webpack": "^3.6.0",
     "webpack-dev-middleware": "^1.12.0",
-    "webpack-hot-middleware": "^2.20.0"
+    "webpack-hot-middleware": "^2.20.0",
+    "webpack-md5-hash": "^0.0.5",
+    "webpack-node-externals": "^1.6.0",
+    "webpack-tool": "^2.1.2"
   },
   "author": "",
   "license": "ISC"

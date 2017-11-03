@@ -2,8 +2,8 @@
 export const ADD_COUNTER = 'ADD_COUNTER';
 
 export function addCounter(num) {
-  return function (dispatch, getState) {
-    return new Promise((resolve, reject) => {
+  return function(dispatch) {
+    return new Promise(resolve => {
       setTimeout(() => {
         const action = {
           type: ADD_COUNTER,
@@ -13,5 +13,5 @@ export function addCounter(num) {
         resolve(action);
       }, 100);
     });
-  }
+  };
 }
