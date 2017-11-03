@@ -70,6 +70,10 @@ const getWebpackConfig = options => {
     plugins: [
       new CleanWebpackPlugin([ output ]),
       new WebpackMd5Hash(),
+      new webpack.EnvironmentPlugin({
+        NODE_ENV: 'development',
+        DEBUG: false,
+      }),
       new ExtractTextPlugin(`css/[name]${isProduction ? '.[contenthash:8]' : ''}.css`),
     ],
   };

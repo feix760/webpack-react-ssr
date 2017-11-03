@@ -13,7 +13,7 @@ class Component extends React.Component {
     return (
       <div>
         <img src={ require('./image/logo.png') } alt="" />
-        <p>Hello world, { counter.num }</p>
+        <p>{ counter.msg } { counter.num }</p>
         <Banner></Banner>
       </div>
     );
@@ -47,7 +47,11 @@ export function fetchStore(store) {
 function clientRender() {
   const store = createStore();
 
-  ReactDOM.render(
+  if (process.env.NODE_ENV === 'production') {
+    console.log('Welcome to production');
+  }
+
+  ReactDOM[ window.__initialState ? 'hydrate' : 'render' ](
     createElement(store),
     document.getElementById('root')
   );

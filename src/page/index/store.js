@@ -6,6 +6,7 @@ import { ADD_COUNTER } from './action';
 export default function() {
   const defaultCounter = {
     num: 0,
+    msg: '<p>Hello world</p>',
   };
   return createStore(
     combineReducers({
