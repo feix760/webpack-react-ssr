@@ -9,6 +9,7 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const WebpackMd5Hash = require('webpack-md5-hash');
 const nodeExternals = require('webpack-node-externals');
 const HtmlWebpackExternalsPlugin = require('html-webpack-externals-plugin');
+const ProgressBarPlugin = require('progress-bar-webpack-plugin');
 const HotModuleReplacementPlugin = webpack.HotModuleReplacementPlugin;
 const UglifyJSPlugin = webpack.optimize.UglifyJsPlugin;
 const CommonsChunkPlugin = webpack.optimize.CommonsChunkPlugin;
@@ -77,6 +78,7 @@ const getWebpackConfig = options => {
         NODE_ENV: 'development',
         DEBUG: false,
       }),
+      new ProgressBarPlugin(),
       new HtmlWebpackInlineSourcePlugin(),
       new ExtractTextPlugin(`css/[name]${isProduction ? '.[contenthash:8]' : ''}.css`),
       {
