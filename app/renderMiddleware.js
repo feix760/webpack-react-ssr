@@ -35,6 +35,7 @@ module.exports = (req, res, next) => {
   const { filename, fileSystem } = req;
   const cwd = process.cwd();
 
+  // TODO use fs async method
   if (!req.query._clientRender && fileSystem.existsSync(filename)) {
 
     const chunk = filename.replace(cwd, '')

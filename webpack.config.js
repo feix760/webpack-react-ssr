@@ -83,7 +83,6 @@ const getWebpackConfig = options => {
         apply(compiler) {
           compiler.plugin('compilation', function (compilation) {
             compilation.plugin('html-webpack-plugin-alter-asset-tags', (htmlPluginData, callback) => {
-              debugger;
               callback(null, htmlPluginData);
             });
           });
