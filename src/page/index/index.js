@@ -1,6 +1,5 @@
 
 import React from 'react';
-import ReactDOM from 'react-dom';
 import { Provider, connect } from 'react-redux';
 import createStore from './store';
 import { addCounter } from './action';
@@ -13,7 +12,9 @@ class Component extends React.Component {
     return (
       <div>
         <img src={ require('./image/logo.png') } alt="" />
-        <p>{ counter.msg } { counter.num }</p>
+        <p>{ counter.msg }</p>
+        <p>{ counter.href }</p>
+        <p>{ counter.num }</p>
         <Banner></Banner>
       </div>
     );
@@ -41,15 +42,12 @@ export function fetchStore(store) {
     return store.dispatch(addCounter(5));
   }
   return Promise.resolve();
-
 }
 
 function clientRender() {
-  const store = createStore();
+  const ReactDOM = require('react-dom');
 
-  if (process.env.NODE_ENV === 'production') {
-    console.log('Welcome to production');
-  }
+  const store = createStore();
 
   ReactDOM[ window.__initialState ? 'hydrate' : 'render' ](
     createElement(store),
@@ -59,6 +57,6 @@ function clientRender() {
   fetchStore(store);
 }
 
-if (typeof window !== 'undefined') {
+if (typeof window !== 'undefined' && window.HTMLElement) {
   clientRender();
 }

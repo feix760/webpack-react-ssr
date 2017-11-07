@@ -7,6 +7,7 @@ export default function() {
   const defaultCounter = {
     num: 0,
     msg: '<p>Hello world</p>',
+    href: location.href,
   };
   return createStore(
     combineReducers({

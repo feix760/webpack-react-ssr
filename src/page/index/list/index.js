@@ -3,7 +3,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.scss';
 
-class Page extends React.Component {
+class Component extends React.Component {
   render() {
     return (
       <div>Hello world, List</div>
@@ -13,7 +13,7 @@ class Page extends React.Component {
 
 export function createElement() {
   return (
-    <Page></Page>
+    <Component></Component>
   );
 }
 

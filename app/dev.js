@@ -1,9 +1,9 @@
 
-const renderMiddleware = require('./renderMiddleware');
 const webpack = require('webpack');
 const WebpackDevMiddleware = require('webpack-dev-middleware');
 const WebpackHotMiddleware = require('webpack-hot-middleware');
 const config = require('../webpack.config.js');
+const renderMiddleware = require('./renderMiddleware');
 
 module.exports = app => {
   const compiler = webpack(config);

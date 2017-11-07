@@ -3,10 +3,12 @@ const glob = require('glob-all');
 const webpack = require('webpack');
 const webpackTool = require('webpack-tool');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const HtmlWebpackInlineSourcePlugin = require('html-webpack-inline-source-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const WebpackMd5Hash = require('webpack-md5-hash');
 const nodeExternals = require('webpack-node-externals');
+const HtmlWebpackExternalsPlugin = require('html-webpack-externals-plugin');
 const HotModuleReplacementPlugin = webpack.HotModuleReplacementPlugin;
 const UglifyJSPlugin = webpack.optimize.UglifyJsPlugin;
 const CommonsChunkPlugin = webpack.optimize.CommonsChunkPlugin;
@@ -27,6 +29,7 @@ const getWebpackConfig = options => {
     output: {
       path: path.join(__dirname, output),
       filename: `js/[name]${isProduction && !isServer ? '.[chunkhash:8]' : ''}.js`,
+      // publicPath: isProduction ? '//8.url.cn/' : '/',
       publicPath: '/',
     },
     module: {
@@ -74,7 +77,18 @@ const getWebpackConfig = options => {
         NODE_ENV: 'development',
         DEBUG: false,
       }),
+      new HtmlWebpackInlineSourcePlugin(),
       new ExtractTextPlugin(`css/[name]${isProduction ? '.[contenthash:8]' : ''}.css`),
+      {
+        apply(compiler) {
+          compiler.plugin('compilation', function (compilation) {
+            compilation.plugin('html-webpack-plugin-alter-asset-tags', (htmlPluginData, callback) => {
+              debugger;
+              callback(null, htmlPluginData);
+            });
+          });
+        },
+      }
     ],
   };
 
@@ -114,6 +128,7 @@ const getWebpackConfig = options => {
       const entry = entries instanceof Array ? entries[entries.length - 1] : entries;
 
       config.plugins.push(new HtmlWebpackPlugin({
+        inlineSource: isProduction ? '\\.(css|\\inline\\.js)$' : undefined,
         filename: `html/${chunk}.html`,
         template: entry.replace(/\.js$/, '.html'),
         chunks: commonsChunk.concat([ chunk ]),
@@ -154,12 +169,32 @@ const getWebpackConfig = options => {
     }
   };
 
+  const setExternalAsset = () => {
+    if (isProduction && !isServer) {
+      config.plugins.push(new HtmlWebpackExternalsPlugin({
+        externals: [
+          {
+            module: 'react',
+            entry: 'https://unpkg.com/react@16.0.0/umd/react.production.min.js',
+            global: 'React',
+          },
+          {
+            module: 'react-dom',
+            entry: 'https://unpkg.com/react-dom@16.0.0/umd/react-dom.production.min.js',
+            global: 'ReactDOM',
+          },
+        ],
+      }));
+    }
+  };
+
   setEntry();
   setCommonsChunk();
   setHTMLPlugin();
   setUglify();
   setTarget();
   setDevTool();
+  setExternalAsset();
 
   return config;
 };

@@ -3,17 +3,17 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.scss';
 
-class Page extends React.Component {
+class Component extends React.Component {
   render() {
     return (
-      <div>Hello world, List</div>
+      <div>Hello world, News</div>
     );
   }
 }
 
 export function createElement() {
   return (
-    <Page></Page>
+    <Component></Component>
   );
 }
 

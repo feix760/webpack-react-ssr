@@ -1,16 +1,14 @@
 const express = require('express');
-const productionApp = require('./app/production');
-const devApp = require('./app/dev');
 
 const app = express();
 
 if (process.env.NODE_ENV === 'production') {
-  productionApp(app);
+  require('./app/production')(app);
 } else {
-  devApp(app);
+  require('./app/dev')(app);
 }
 
 // Serve the files on port 3000.
 app.listen(3000, function() {
-  console.log('Example app listening on port 3000!\n');
+  console.log('App on http://127.0.0.1:3000/\n');
 });
