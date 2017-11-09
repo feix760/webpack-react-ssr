@@ -30,8 +30,7 @@ const getWebpackConfig = options => {
     output: {
       path: path.join(__dirname, output),
       filename: `js/[name]${isProduction && !isServer ? '.[chunkhash:8]' : ''}.js`,
-      // publicPath: isProduction ? '//8.url.cn/' : '/',
-      publicPath: '/',
+      publicPath: isProduction ? '//127.0.0.1/' : '/',
     },
     module: {
       rules: [
@@ -41,6 +40,18 @@ const getWebpackConfig = options => {
           use: {
             loader: 'babel-loader',
           },
+        },
+        {
+          test: /\.html$/,
+          use: [
+            {
+              loader: 'html-loader',
+              options: {
+                interpolate: 1,
+                attrs: [':src'],
+              },
+            },
+          ],
         },
         {
           test: /\.scss$/,
@@ -81,15 +92,6 @@ const getWebpackConfig = options => {
       new ProgressBarPlugin(),
       new HtmlWebpackInlineSourcePlugin(),
       new ExtractTextPlugin(`css/[name]${isProduction ? '.[contenthash:8]' : ''}.css`),
-      {
-        apply(compiler) {
-          compiler.plugin('compilation', function (compilation) {
-            compilation.plugin('html-webpack-plugin-alter-asset-tags', (htmlPluginData, callback) => {
-              callback(null, htmlPluginData);
-            });
-          });
-        },
-      }
     ],
   };
 
