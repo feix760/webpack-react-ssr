@@ -30,7 +30,7 @@ const getWebpackConfig = options => {
     output: {
       path: path.join(__dirname, output),
       filename: `js/[name]${isProduction && !isServer ? '.[chunkhash:8]' : ''}.js`,
-      publicPath: isProduction ? '//127.0.0.1/' : '/',
+      publicPath: isProduction ? '//127.0.0.1:3000/' : '/',
     },
     module: {
       rules: [
