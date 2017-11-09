@@ -15,3 +15,5 @@ exports.requireFromString = (code, path) => {
   };
   return obj;
 };
+
+exports.escapeHTML = html => html.replace(/</g, '\\x3C');

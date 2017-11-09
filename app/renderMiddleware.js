@@ -6,32 +6,9 @@ const ReactDOM = require('react-dom/server');
 const util = require('./util');
 const Window = require('./window');
 
-const escapeHTML = html => html.replace(/</g, '\\x3C');
-
-Object.defineProperties(global, {
-  window: {
-    get() {
-      return process.domain && process.domain.window || undefined;
-    },
-  },
-  document: {
-    get() {
-      return process.domain && process.domain.window.document || undefined;
-    },
-  },
-  navigator: {
-    get() {
-      return process.domain && process.domain.window.navigator || undefined;
-    },
-  },
-  location: {
-    get() {
-      return process.domain && process.domain.window.location || undefined;
-    },
-  },
-});
-
 module.exports = (req, res, next) => {
+  require('./defineGlobalProperties');
+
   const { filename, fileSystem } = req;
   const cwd = process.cwd();
 
@@ -73,7 +50,7 @@ module.exports = (req, res, next) => {
           const body = template.replace(/<!--\s*__initialHTML\s*-->/, html)
             .replace(
               /<!--\s*__initialState\s*-->/,
-              `<script> window.__initialState = ${escapeHTML(JSON.stringify(state))}</script>`
+              `<script> window.__initialState = ${util.escapeHTML(JSON.stringify(state))}</script>`
             );
           res.end(body);
         });
