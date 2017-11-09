@@ -99,7 +99,7 @@ const getWebpackConfig = options => {
   const setEntry = () => {
     const entry = {};
     glob.sync(config.entry.include).forEach(item => {
-      const name = item.replace(/^(\.?\/)?src\/page\//, '').replace(/\/[^\/]*$/, '');
+      const name = item.replace(/^(\.?[\/\\])?src[\/\\]page[\/\\]/, '').replace(/[\\\/][^\/\\]*$/, '');
       if (isServer || isProduction) {
         entry[name] = [ item ];
       } else {
@@ -132,7 +132,7 @@ const getWebpackConfig = options => {
       const entry = entries instanceof Array ? entries[entries.length - 1] : entries;
 
       config.plugins.push(new HtmlWebpackPlugin({
-        inlineSource: isProduction ? '\\.(css|\\inline\\.js)$' : undefined,
+        inlineSource: isProduction ? '\\.css$' : undefined,
         filename: `html/${chunk}.html`,
         template: entry.replace(/\.js$/, '.html'),
         chunks: commonsChunk.concat([ chunk ]),
