@@ -39,7 +39,7 @@ module.exports = (req, res, next) => {
   if (!req.query._clientRender && fileSystem.existsSync(filename)) {
 
     const chunk = filename.replace(cwd, '')
-      .replace(/^\/?[^\/]*\/html\//, '')
+      .replace(/^[\/\\]?[^\/\\]*[\/\\]html[\/\\]/, '')
       .replace(/\.html$/, '.js');
 
     const chunkfile = path.join(cwd, 'server/js', chunk);
