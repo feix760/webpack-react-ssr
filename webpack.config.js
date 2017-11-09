@@ -10,6 +10,7 @@ const WebpackMd5Hash = require('webpack-md5-hash');
 const nodeExternals = require('webpack-node-externals');
 const HtmlWebpackExternalsPlugin = require('html-webpack-externals-plugin');
 const ProgressBarPlugin = require('progress-bar-webpack-plugin');
+const ZipPlugin = require('zip-webpack-plugin');
 const HotModuleReplacementPlugin = webpack.HotModuleReplacementPlugin;
 const UglifyJSPlugin = webpack.optimize.UglifyJsPlugin;
 const CommonsChunkPlugin = webpack.optimize.CommonsChunkPlugin;
@@ -197,6 +198,15 @@ const getWebpackConfig = options => {
     }
   };
 
+  const setZip = () => {
+    if (isProduction && !isServer) {
+      config.plugins.push(new ZipPlugin({
+        path: 'zip',
+        filename: 'offline.zip',
+      }));
+    }
+  };
+
   setEntry();
   setCommonsChunk();
   setHTMLPlugin();
@@ -204,6 +214,7 @@ const getWebpackConfig = options => {
   setTarget();
   setDevTool();
   setExternalAsset();
+  setZip();
 
   return config;
 };

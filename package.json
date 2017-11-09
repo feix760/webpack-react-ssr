@@ -48,7 +48,8 @@
     "webpack-hot-middleware": "^2.20.0",
     "webpack-md5-hash": "^0.0.5",
     "webpack-node-externals": "^1.6.0",
-    "webpack-tool": "^2.1.2"
+    "webpack-tool": "^2.1.2",
+    "zip-webpack-plugin": "^2.0.0"
   },
   "author": "",
   "license": "ISC"
