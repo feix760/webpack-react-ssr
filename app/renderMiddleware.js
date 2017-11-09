@@ -55,6 +55,7 @@ module.exports = (req, res, next) => {
     const d = domain.create();
     d.on('error', err => {
       console.error('Caught error!', err);
+      // static middleware will send the html of client render
       next();
     });
     d.window = new Window(req);

@@ -1,6 +1,2 @@
 
-class Proload {
-
-}
-
-console.log('preload');
+console.log(`preload: ${Date.now()}`);

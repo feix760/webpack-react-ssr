@@ -48,7 +48,7 @@ const getWebpackConfig = options => {
               loader: 'html-loader',
               options: {
                 interpolate: 1,
-                attrs: [':src'],
+                attrs: [ ':src' ],
               },
             },
           ],
@@ -61,7 +61,7 @@ const getWebpackConfig = options => {
               {
                 loader: 'css-loader',
                 options: {
-                  minimize: isProduction,
+                  minimize: isProduction && !isServer,
                 },
               },
               {
@@ -135,6 +135,12 @@ const getWebpackConfig = options => {
         filename: `html/${chunk}.html`,
         template: entry.replace(/\.js$/, '.html'),
         chunks: commonsChunk.concat([ chunk ]),
+        minify: isProduction ? {
+          minifyJS: true,
+          minifyCSS: true,
+          collapseWhitespace: true,
+          preserveLineBreaks: true,
+        } : false,
       }));
     });
   };

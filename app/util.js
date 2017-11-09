@@ -14,5 +14,4 @@ exports.requireFromString = (code, path) => {
     obj,
   };
   return obj;
-
 };

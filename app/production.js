@@ -9,6 +9,7 @@ module.exports = app => {
 
   app.use('/*.html', (req, res, next) => {
     req.filename = path.join(cwd, 'dist', req.originalUrl.replace(/\?.*$/, ''));
+    // TODO load all html to an memory file system
     req.fileSystem = fs;
 
     next();
