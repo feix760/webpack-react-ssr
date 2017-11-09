@@ -9,6 +9,7 @@ import './index.scss';
 class Component extends React.Component {
   render() {
     const { counter } = this.props;
+
     return (
       <div>
         <img src={ require('./image/logo.png') } alt="" />
@@ -53,7 +54,6 @@ function clientRender() {
     createElement(store),
     document.getElementById('root')
   );
-
   fetchStore(store);
 }
 
