@@ -17,7 +17,7 @@ export function createElement() {
   );
 }
 
-if (typeof window !== 'undefined') {
+if (typeof window !== 'undefined' && window.HTMLElement) {
   ReactDOM[ window.__initialState ? 'hydrate' : 'render' ](
     createElement(),
     document.getElementById('root')
