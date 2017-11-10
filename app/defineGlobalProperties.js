@@ -5,6 +5,11 @@ Object.defineProperties(global, {
       return process.domain && process.domain.window || undefined;
     },
   },
+  fetch: {
+    get() {
+      return process.domain && process.domain.window.fetch || undefined;
+    },
+  },
   document: {
     get() {
       return process.domain && process.domain.window.document || undefined;

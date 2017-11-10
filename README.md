@@ -1,48 +1,16 @@
 
 # webpack-react-ssr
 
-## 开发模式
+## Script description
 
-### 启动服务
+| Script  | Description |
+|---|---|
+| npm run start | Start development build and server. App on http://127.0.0.1:3000/html/index.html |
+| npm run build | Build development and output files to `dist` & `server` directories |
+| npm run build-prod | Build production and output files to `dist` & `server` directories |
+| npm run start-prod | Start production server |
+| npm run lint | Run eslint check |
+| npm run fix | Run eslint check with `--fix` option |
 
-```sh
-npm run start
-```
+## Page component exports
 
-入口: http://127.0.0.1:3000/html/index.html 
-
-### 查看编译输出
-
-```sh
-npm run build
-```
-
-## 生成模式
-
-### 编译
-
-```sh
-npm run build-prod
-```
-
-### 启动服务
-
-```sh
-npm run start-prod
-```
-
-入口: http://127.0.0.1:3000/html/index.html 
-
-## ESLint
-
-### 检查
-
-```sh
-npm run lint
-```
-
-### Fix
-
-```sh
-npm run fix
-```

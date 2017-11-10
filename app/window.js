@@ -28,6 +28,8 @@ class Window {
     this.document = new Document(req);
     this.location = new Location(req);
     this.navigator = new Navigator(req);
+    // TODO create a fetch client with user's cookie & userAgent
+    // this.fetch =
   }
 }
 
