@@ -35,6 +35,7 @@ module.exports = (req, res, next) => {
       // static middleware will send the html of client render
       next();
     });
+    // while run server render also can use `location.href|document.cookie` to get request info
     d.window = new Window(req);
     d.run(() => {
       const store = Component.createStore && Component.createStore();
