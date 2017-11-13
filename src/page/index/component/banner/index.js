@@ -5,9 +5,9 @@ import './index.scss';
 export default class Banner extends React.Component {
   render() {
     return (
-      <div>
+      <div className="banner-container">
         <p>Banner</p>
-        <img src={ require('./image/logo.png') } alt="" />
+        <div className="image"></div>
       </div>
     );
   }

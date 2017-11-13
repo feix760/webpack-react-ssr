@@ -12,7 +12,12 @@ class Component extends React.Component {
 
     return (
       <div>
-        <img src={ require('./image/logo.png') } alt="" />
+        <div className="image">
+          <span className="react"></span>
+          <span className="redux"></span>
+          <span className="babel"></span>
+          <img src={ require('./image/sass.png') } alt="" />
+        </div>
         <p>{ counter.msg }</p>
         <p>{ counter.href }</p>
         <p>{ counter.num }</p>

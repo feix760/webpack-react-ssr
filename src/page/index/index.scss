@@ -1,4 +1,42 @@
 #root {
   color: red;
   transform: translate3d(0,1px,0);
+  .image {
+    line-height: 160px;
+    * {
+      vertical-align: middle;
+    }
+    .react {
+      display: inline-block;
+      width: (170px / 2);
+      height: (153px / 2);
+      background-image: url('./image/react@2x.png?__sprite');
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+    .redux {
+      display: inline-block;
+      width: (160px / 2);
+      height: (160px / 2);
+      background-image: url('./image/redux@2x.png?__sprite');
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+    .babel {
+      display: inline-block;
+      width: 225px;
+      height: 150px;
+      background-image: url('./image/babel.png');
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+  }
+}
+
+@mixin border-radius($radius) {
+  border-radius: $radius;
+}
+
+.box {
+  @include border-radius(10px);
 }

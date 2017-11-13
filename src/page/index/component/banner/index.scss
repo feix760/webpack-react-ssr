@@ -1,3 +1,11 @@
-.banner {
+.banner-container {
   font-size: 20px;
+  .image {
+    display: inline-block;
+    width: 120px;
+    height: 120px;
+    background-image: url('./image/webpack.png?__sprite');
+    background-repeat: no-repeat;
+    background-position: center;
+  }
 }

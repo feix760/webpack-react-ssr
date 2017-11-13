@@ -29,7 +29,9 @@ const getWebpackConfig = options => {
       ],
     },
     output: {
+      // output dir
       path: path.join(__dirname, output),
+      // html output path
       filename: `js/[name]${isProduction && !isServer ? '.[chunkhash:8]' : ''}.js`,
       publicPath: isProduction ? '//127.0.0.1:3000/' : '/',
     },
@@ -65,11 +67,10 @@ const getWebpackConfig = options => {
                   minimize: isProduction && !isServer,
                 },
               },
-              {
-                loader: 'autoprefixer-loader',
-              },
+              'autoprefixer-loader',
+              !isServer && 'postcss-loader',
               'sass-loader',
-            ],
+            ].filter(item => item),
           }),
         },
         {
@@ -77,6 +78,7 @@ const getWebpackConfig = options => {
           use: {
             loader: 'file-loader',
             options: {
+              // img output path
               name: 'img/[name].[hash:8].[ext]',
             },
           },
@@ -92,6 +94,7 @@ const getWebpackConfig = options => {
       }),
       new ProgressBarPlugin(),
       new HtmlWebpackInlineSourcePlugin(),
+      // css output path
       new ExtractTextPlugin(`css/[name]${isProduction ? '.[contenthash:8]' : ''}.css`),
     ],
   };
@@ -112,6 +115,7 @@ const getWebpackConfig = options => {
   const setCommonsChunk = () => {
     if (!isServer) {
       config.plugins.push(new CommonsChunkPlugin({
+        // common chunk name
         name: 'common',
       }));
     }
@@ -133,7 +137,9 @@ const getWebpackConfig = options => {
 
       config.plugins.push(new HtmlWebpackPlugin({
         inlineSource: isProduction ? '\\.css$' : undefined,
+        // html output path
         filename: `html/${chunk}.html`,
+        // template path
         template: entry.replace(/\.js$/, '.html'),
         chunks: commonsChunk.concat([ chunk ]),
         minify: isProduction ? {
