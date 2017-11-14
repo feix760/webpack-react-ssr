@@ -12,6 +12,7 @@ const HtmlWebpackExternalsPlugin = require('html-webpack-externals-plugin');
 const ProgressBarPlugin = require('progress-bar-webpack-plugin');
 const ZipPlugin = require('zip-webpack-plugin');
 const HotModuleReplacementPlugin = webpack.HotModuleReplacementPlugin;
+const WatchIgnorePlugin = webpack.WatchIgnorePlugin;
 const UglifyJSPlugin = webpack.optimize.UglifyJsPlugin;
 const CommonsChunkPlugin = webpack.optimize.CommonsChunkPlugin;
 
@@ -31,7 +32,7 @@ const getWebpackConfig = options => {
     output: {
       // output dir
       path: path.join(__dirname, output),
-      // html output path
+      // js output path
       filename: `js/[name]${isProduction && !isServer ? '.[chunkhash:8]' : ''}.js`,
       publicPath: isProduction ? '//127.0.0.1:3000/' : '/',
     },
@@ -50,7 +51,7 @@ const getWebpackConfig = options => {
             {
               loader: 'html-loader',
               options: {
-                interpolate: 1,
+                interpolate: 1, // supported html `${}` sytax
                 attrs: [ ':src' ],
               },
             },
@@ -67,10 +68,11 @@ const getWebpackConfig = options => {
                   minimize: isProduction && !isServer,
                 },
               },
+            ].concat(isServer ? [] : [
               'autoprefixer-loader',
-              !isServer && 'postcss-loader',
+              'postcss-loader',
               'sass-loader',
-            ].filter(item => item),
+            ]),
           }),
         },
         {
@@ -87,6 +89,9 @@ const getWebpackConfig = options => {
     },
     plugins: [
       new CleanWebpackPlugin([ output ]),
+      // postcss-sprites will create tmp images to dist/xx
+      new WatchIgnorePlugin([ path.join(__dirname, 'dist') ]),
+      // js use content md5
       new WebpackMd5Hash(),
       new webpack.EnvironmentPlugin({
         NODE_ENV: 'development',
@@ -96,7 +101,30 @@ const getWebpackConfig = options => {
       new HtmlWebpackInlineSourcePlugin(),
       // css output path
       new ExtractTextPlugin(`css/[name]${isProduction ? '.[contenthash:8]' : ''}.css`),
-    ],
+      !isServer && new CommonsChunkPlugin({
+        // common chunk name
+        name: 'common',
+      }),
+      isProduction && !isServer && new UglifyJSPlugin(),
+      isProduction && !isServer && new HtmlWebpackExternalsPlugin({
+        externals: [
+          {
+            module: 'react',
+            entry: 'https://unpkg.com/react@16.0.0/umd/react.production.min.js',
+            global: 'React',
+          },
+          {
+            module: 'react-dom',
+            entry: 'https://unpkg.com/react-dom@16.0.0/umd/react-dom.production.min.js',
+            global: 'ReactDOM',
+          },
+        ],
+      }),
+      isProduction && !isServer && new ZipPlugin({
+        path: 'zip',
+        filename: 'offline.zip',
+      }),
+    ].filter(item => item),
   };
 
   const setEntry = () => {
@@ -110,15 +138,6 @@ const getWebpackConfig = options => {
       }
     });
     config.entry = entry;
-  };
-
-  const setCommonsChunk = () => {
-    if (!isServer) {
-      config.plugins.push(new CommonsChunkPlugin({
-        // common chunk name
-        name: 'common',
-      }));
-    }
   };
 
   const setHTMLPlugin = () => {
@@ -152,12 +171,6 @@ const getWebpackConfig = options => {
     });
   };
 
-  const setUglify = () => {
-    if (isProduction && !isServer) {
-      config.plugins.push(new UglifyJSPlugin());
-    }
-  };
-
   const setTarget = () => {
     if (isServer) {
       config = webpackTool.merge(config, {
@@ -185,42 +198,10 @@ const getWebpackConfig = options => {
     }
   };
 
-  const setExternalAsset = () => {
-    if (isProduction && !isServer) {
-      config.plugins.push(new HtmlWebpackExternalsPlugin({
-        externals: [
-          {
-            module: 'react',
-            entry: 'https://unpkg.com/react@16.0.0/umd/react.production.min.js',
-            global: 'React',
-          },
-          {
-            module: 'react-dom',
-            entry: 'https://unpkg.com/react-dom@16.0.0/umd/react-dom.production.min.js',
-            global: 'ReactDOM',
-          },
-        ],
-      }));
-    }
-  };
-
-  const setZip = () => {
-    if (isProduction && !isServer) {
-      config.plugins.push(new ZipPlugin({
-        path: 'zip',
-        filename: 'offline.zip',
-      }));
-    }
-  };
-
   setEntry();
-  setCommonsChunk();
   setHTMLPlugin();
-  setUglify();
   setTarget();
   setDevTool();
-  setExternalAsset();
-  setZip();
 
   return config;
 };

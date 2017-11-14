@@ -1,12 +1,13 @@
 
 const md5 = require('md5');
+const sprites = require('postcss-sprites');
 
 /**
  * Only for sprites
  */
 module.exports = {
   plugins: [
-    require('postcss-sprites')({
+    sprites({
       spritePath: './dist/sprites.tmp/',
       retina: true,
       spritesmith: {
