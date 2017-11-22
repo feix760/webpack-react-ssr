@@ -1,15 +1,15 @@
 const path = require('path');
 const glob = require('glob-all');
+const chalk = require('chalk');
 const webpack = require('webpack');
 const webpackTool = require('webpack-tool');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const HtmlWebpackInlineSourcePlugin = require('html-webpack-inline-source-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const WebpackMd5Hash = require('webpack-md5-hash');
+const WebpackChunkHash = require('webpack-chunk-hash');
 const nodeExternals = require('webpack-node-externals');
 const HtmlWebpackExternalsPlugin = require('html-webpack-externals-plugin');
-const ProgressBarPlugin = require('progress-bar-webpack-plugin');
 const ZipPlugin = require('zip-webpack-plugin');
 const HotModuleReplacementPlugin = webpack.HotModuleReplacementPlugin;
 const WatchIgnorePlugin = webpack.WatchIgnorePlugin;
@@ -41,9 +41,9 @@ const getWebpackConfig = options => {
         {
           test: /\.js$/,
           exclude: /node_modules/,
-          use: {
-            loader: 'babel-loader',
-          },
+          use: [
+            'babel-loader',
+          ],
         },
         {
           test: /\.html$/,
@@ -92,12 +92,19 @@ const getWebpackConfig = options => {
       // postcss-sprites will create tmp images to dist/xx
       new WatchIgnorePlugin([ path.join(__dirname, 'dist') ]),
       // js use content md5
-      new WebpackMd5Hash(),
+      new WebpackChunkHash(),
       new webpack.EnvironmentPlugin({
         NODE_ENV: 'development',
         DEBUG: false,
       }),
-      new ProgressBarPlugin(),
+      new webpack.ProgressPlugin((percentage, msg, modules) => {
+        const stream = process.stderr;
+        if (stream.isTTY && percentage < 0.71) {
+          stream.cursorTo(0);
+          stream.write(chalk.magenta(`📦  ${(modules || '').split(' ')[0]} ${msg} `));
+          stream.clearLine(1);
+        }
+      }),
       new HtmlWebpackInlineSourcePlugin(),
       // css output path
       new ExtractTextPlugin(`css/[name]${isProduction ? '.[contenthash:8]' : ''}.css`),
@@ -185,7 +192,7 @@ const getWebpackConfig = options => {
 
   const setDevTool = () => {
     if (!isProduction) {
-      config.devtool = 'source-map';
+      config.devtool = 'eval';
 
       if (!isServer) {
         config.devServer = {

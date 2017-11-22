@@ -1,6 +1,6 @@
 
+const chalk = require('chalk');
 const webpack = require('webpack');
-const openurl = require('openurl');
 const WebpackDevMiddleware = require('webpack-dev-middleware');
 const WebpackHotMiddleware = require('webpack-hot-middleware');
 const config = require('../webpack.config.js');
@@ -26,11 +26,7 @@ module.exports = (app, { port }) => {
 
   app.use(WebpackHotMiddleware(compiler.compilers[0]));
 
-  let open = false;
-  compiler.plugin('done', () => {
-    if (!open) {
-      open = true;
-      openurl.open(`http://127.0.0.1:${port}/html/index.html`);
-    }
-  });
+  compiler.plugin('done', () => setTimeout(() => {
+    console.log(chalk.green(`index page: http://127.0.0.1:${port}/html/index.html`));
+  }, 20));
 };

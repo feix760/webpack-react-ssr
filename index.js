@@ -10,6 +10,6 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 // Serve the files on port 3000.
-app.listen(port, function() {
-  console.log(`\nApp on http://127.0.0.1:${port}/\n`);
+app.listen(port, () => {
+  // console.log(`\nApp on http://127.0.0.1:${port}/\n`);
 });
