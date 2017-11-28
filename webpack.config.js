@@ -78,8 +78,10 @@ const getWebpackConfig = options => {
         {
           test: /\.(png|svg|jpg|gif)$/,
           use: {
-            loader: 'file-loader',
+            loader: 'url-loader',
             options: {
+              limit: 2048,
+              fallback: 'file-loader',
               // img output path
               name: 'img/[name].[hash:8].[ext]',
             },
